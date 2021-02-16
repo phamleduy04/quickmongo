@@ -62,6 +62,40 @@ class Database extends Base {
     }
 
     /**
+     * Update the value to the database
+     * @param {string} key Key
+     * @param {any} value Data
+     * @example db.set("foo", "bar").then(() => console.log("Saved data"));
+     * @returns {Promise<any>}
+     */
+    async update(key, value) {
+        if (!Util.isKey(key)) throw new Error("Invalid key specified!", "KeyError");
+        if (!Util.isValue(value)) throw new Error("Invalid value specified!", "ValueError");
+        const parsed = Util.parseKey(key);
+        let raw = await this.schema.findOne({
+            ID: parsed.key
+        });
+        if (!raw) {
+            let data = new this.schema({
+                ID: parsed.key,
+                data: parsed.target ? Util.setData(key, {}, value) : value
+            });
+            await data.update()
+                .catch(e => {
+                    return this.emit("error", e);
+                });
+            return data.data;
+        } else {
+            raw.data = parsed.target ? Util.setData(key, Object.assign({}, raw.data), value) : value;
+            await raw.update()
+                .catch(e => {
+                    return this.emit("error", e);
+                });
+            return raw.data;
+        }
+    }
+
+    /**
      * Deletes a data from the database
      * @param {string} key Key
      * @example db.delete("foo").then(() => console.log("Deleted data"));
