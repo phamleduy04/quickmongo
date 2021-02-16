@@ -94,6 +94,7 @@ declare module "quickmongo" {
 		);
 
 		public set(key: string, value: any): Promise<any>;
+		public update(key: string, value: any): Promise<any>;
 		public delete(key: string): Promise<boolean>;
 		public exists(key: string): Promise<boolean>;
 		public has(key: string): Promise<boolean>;
