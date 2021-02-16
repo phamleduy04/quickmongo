@@ -80,14 +80,14 @@ class Database extends Base {
                 ID: parsed.key,
                 data: parsed.target ? Util.setData(key, {}, value) : value
             });
-            await data.update()
+            await data.updateOne()
                 .catch(e => {
                     return this.emit("error", e);
                 });
             return data.data;
         } else {
             raw.data = parsed.target ? Util.setData(key, Object.assign({}, raw.data), value) : value;
-            await raw.update()
+            await raw.updateOne()
                 .catch(e => {
                     return this.emit("error", e);
                 });
